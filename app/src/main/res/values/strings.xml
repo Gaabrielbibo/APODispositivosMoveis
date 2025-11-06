@@ -1,3 +1,21 @@
 <resources>
     <string name="app_name">APODispositivosMoveis</string>
+
+    <!-- MainActivity -->
+    <string name="welcome_message">Seja bem-vindo ao meu aplicativo!</string>
+    <string name="start_button">Iniciar</string>
+    <string name="about_menu">Sobre</string>
+    <string name="version_toast">Versão: %s</string>
+
+    <!-- Activity2 -->
+    <string name="location_prompt">Insira a localização</string>
+    <string name="location_hint">Digite a localização</string>
+    <string name="search_button">Buscar</string>
+    <string name="city_not_found_toast">Cidade não encontrada</string>
+    <string name="request_failed_toast">Falha na requisição: %s</string>
+    <string name="weather_result_format">Temperatura em %s: %.1f°C\nUmidade: %.0f%%\nDescrição: %s</string>
+    <string name="please_enter_city_toast">Por favor, insira uma cidade</string>
+
+    <!-- Toolbar -->
+    <string name="app_title">Meu APP</string>
 </resources>

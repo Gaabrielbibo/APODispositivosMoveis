@@ -2,7 +2,6 @@ package com.example.apodispositivosmoveis;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
@@ -45,20 +44,22 @@ public class Activity2 extends AppCompatActivity {
         Button searchButton = findViewById(R.id.search_button);
         weatherResult = findViewById(R.id.weather_result);
 
-        // Exibe o teclado automaticamente
         locationInput.requestFocus();
         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-        imm.showSoftInput(locationInput, InputMethodManager.SHOW_IMPLICIT);
+        if (imm != null) {
+            imm.showSoftInput(locationInput, InputMethodManager.SHOW_IMPLICIT);
+        }
 
         locationInput.setOnEditorActionListener((v, actionId, event) -> {
             if (actionId == EditorInfo.IME_ACTION_SEARCH) {
                 String cityName = Objects.requireNonNull(locationInput.getText()).toString();
                 if (cityName.isEmpty()) {
-                    Toast.makeText(Activity2.this, "Por favor, insira uma cidade", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(Activity2.this, getString(R.string.please_enter_city_toast), Toast.LENGTH_SHORT).show();
                 } else {
                     fetchWeatherData(cityName);
-                    // Esconde o teclado após a busca
-                    imm.hideSoftInputFromWindow(locationInput.getWindowToken(), 0);
+                    if (imm != null) {
+                        imm.hideSoftInputFromWindow(locationInput.getWindowToken(), 0);
+                    }
                 }
                 return true;
             }
@@ -68,7 +69,7 @@ public class Activity2 extends AppCompatActivity {
         searchButton.setOnClickListener(v -> {
             String cityName = Objects.requireNonNull(locationInput.getText()).toString();
             if (cityName.isEmpty()) {
-                Toast.makeText(Activity2.this, "Por favor, insira uma cidade", Toast.LENGTH_SHORT).show();
+                Toast.makeText(Activity2.this, getString(R.string.please_enter_city_toast), Toast.LENGTH_SHORT).show();
                 return;
             }
             fetchWeatherData(cityName);
@@ -83,26 +84,29 @@ public class Activity2 extends AppCompatActivity {
 
     private void fetchWeatherData(String cityName) {
         APITempo apiService = RetrofitClient.getClient().create(APITempo.class);
-        String apiKey = "90edfe0989cf474b6226a5789a0e8f42"; // SUBSTITUA PELA SUA CHAVE DE API
+        String apiKey = "90edfe0989cf474b6226a5789a0e8f42";
         Call<WeatherResponse> call = apiService.getTempo(cityName, apiKey, "metric");
 
-        call.enqueue(new Callback<WeatherResponse>() {
+        call.enqueue(new Callback<>() {
             @Override
             public void onResponse(@NonNull Call<WeatherResponse> call, @NonNull Response<WeatherResponse> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     WeatherResponse weatherResponse = response.body();
-                    String result = "Temperatura em " + weatherResponse.name + ": " + weatherResponse.main.temp + "°C\n"
-                            + "Umidade: " + weatherResponse.main.humidity + "%\n"
-                            + "Descrição: " + weatherResponse.weather.get(0).description;
+                    String result = getString(R.string.weather_result_format,
+                            weatherResponse.name,
+                            weatherResponse.main.temp,
+                            weatherResponse.main.humidity,
+                            weatherResponse.weather.get(0).description);
                     weatherResult.setText(result);
                 } else {
-                    Toast.makeText(Activity2.this, "Cidade não encontrada", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(Activity2.this, getString(R.string.city_not_found_toast), Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onFailure(@NonNull Call<WeatherResponse> call, @NonNull Throwable t) {
-                Toast.makeText(Activity2.this, "Falha na requisição: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                String message = getString(R.string.request_failed_toast, t.getMessage());
+                Toast.makeText(Activity2.this, message, Toast.LENGTH_SHORT).show();
             }
         });
     }
