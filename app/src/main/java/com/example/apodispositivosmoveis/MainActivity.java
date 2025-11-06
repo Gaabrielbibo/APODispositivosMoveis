@@ -10,6 +10,7 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.graphics.Insets;
@@ -60,6 +61,17 @@ public class MainActivity extends AppCompatActivity {
                 e.printStackTrace();
                 // Tratar o erro, talvez com uma mensagem padrão
             }
+            return true;
+        } else if (item.getItemId() == R.id.action_aluno) {
+            String alunoInfo = "Aluno: Gabriel Henrique de Lima Fernandes\n\n" +
+                               "R.A.: 09046000\n\n" +
+                               "Curso: Análise e Desenvolvimento de Sistemas\n\n" +
+                               "Matéria: Programação de Dispositivos Móveis";
+            new AlertDialog.Builder(this)
+                .setTitle("Informações do Aluno")
+                .setMessage(alunoInfo)
+                .setPositiveButton("OK", null)
+                .show();
             return true;
         }
         return super.onOptionsItemSelected(item);
